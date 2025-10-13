@@ -8,20 +8,20 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mi-deployment
+  name: mi-deploymentsm
   namespace: sofiamnm
   labels:
-    app: mi-app
+    app: mi-appsm
     areanegocio: tecnologia
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: mi-app
+      app: mi-appsm
   template:
     metadata:
       labels:
-        app: mi-app
+        app: mi-appsm
     spec:
       containers:
         - name: contenedor-principal
@@ -37,11 +37,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mi-servicio
+  name: mi-serviciosm
   namespace: sofiamnm  # Asegúrate de que coincida con tu Deployment
 spec:
   selector:
-    app: mi-app  # Debe coincidir con las labels del Deployment
+    app: mi-appsm  # Debe coincidir con las labels del Deployment
   ports:
     - protocol: TCP
       port: 4000        # Puerto del Service
