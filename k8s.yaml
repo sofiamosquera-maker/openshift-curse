@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: sofiam
+  name: sofiamnm
+  labels:
+    istio-injection: enabled
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment-sm
-  namespace: sofiam
+  name: mi-deployment
+  namespace: sofiamnm
   labels:
     app: mi-app
     areanegocio: tecnologia
@@ -23,7 +25,7 @@ spec:
     spec:
       containers:
         - name: contenedor-principal
-          image: forcet22/hola-node:1.0.0  # <-- Reemplaza con la imagen que quieras usar
+          image: sofiamosquera/smcursoopenshift:2  # <-- Reemplaza con la imagen que quieras usar
           ports:
             - containerPort: 3000
           envFrom:
@@ -36,7 +38,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mi-servicio
-  namespace: sofiam  # Asegúrate de que coincida con tu Deployment
+  namespace: sofiamnm  # Asegúrate de que coincida con tu Deployment
 spec:
   selector:
     app: mi-app  # Debe coincidir con las labels del Deployment
@@ -50,7 +52,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mi-configmap
-  namespace: sofiam
+  namespace: sofiamnm
 data:
   DATABASE: "192.168.1.1"
 ---
@@ -58,7 +60,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: mi-secret
-  namespace: sofiam
+  namespace: sofiamnm
 type: Opaque
 data:
   PASSWORD: aG9sYQ==
+
+---
