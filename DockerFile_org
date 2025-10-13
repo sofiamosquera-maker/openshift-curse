@@ -1,0 +1,6 @@
+FROM alpine:lastest
+
+CMD echo "Hola Mundo"
+
+
+sofiamosquera/smcursoopenshift

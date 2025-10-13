@@ -1,6 +1,24 @@
-FROM alpine:lastest
+# Usa una imagen de Java para compilar
+FROM openjdk:17-jdk-slim AS build
 
-CMD echo "Hola Mundo"
+WORKDIR /app
 
+# Copia el código fuente
+COPY Main.java .
 
-sofiamosquera/smcursoopenshift
+# Compila el código
+RUN javac Main.java
+
+# Imagen final para ejecución
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# Copia el archivo compilado desde la fase de build
+COPY --from=build /app/Main.class .
+
+# Exponer el puerto
+EXPOSE 3000
+
+# Comando para ejecutar el servicio
+CMD ["java", "Main"]
