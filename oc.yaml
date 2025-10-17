@@ -1,27 +1,20 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sofia-mosquera-dev
-  labels:
-    istio-injection: enabled
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mi-deploymentsm
+  name: mi-deployment
   namespace: sofia-mosquera-dev
   labels:
-    app: mi-appsm
+    app: mi-app
     areanegocio: tecnologia
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: mi-appsm
+      app: mi-app
   template:
     metadata:
       labels:
-        app: mi-appsm
+        app: mi-app
     spec:
       containers:
         - name: contenedor-principal
@@ -44,11 +37,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mi-serviciosm
+  name: mi-servicio
   namespace: sofia-mosquera-dev  # Asegúrate de que coincida con tu Deployment
 spec:
   selector:
-    app: mi-appsm  # Debe coincidir con las labels del Deployment
+    app: mi-app  # Debe coincidir con las labels del Deployment
   ports:
     - protocol: TCP
       port: 4000        # Puerto del Service
