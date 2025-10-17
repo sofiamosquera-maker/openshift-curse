@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sofia-mosquera-dev
+  labels:
+    istio-injection: enabled
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-deploymentsm
+  namespace: sofia-mosquera-dev
+  labels:
+    app: mi-appsm
+    areanegocio: tecnologia
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mi-appsm
+  template:
+    metadata:
+      labels:
+        app: mi-appsm
+    spec:
+      containers:
+        - name: contenedor-principal
+          image: sofiamosquera/smcursoopenshift:2  # <-- Reemplaza con la imagen que quieras usar
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "800Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1500Mi"
+          envFrom:
+            - configMapRef:
+                name: mi-configmap
+            - secretRef:
+                name: mi-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mi-serviciosm
+  namespace: sofia-mosquera-dev  # Asegúrate de que coincida con tu Deployment
+spec:
+  selector:
+    app: mi-appsm  # Debe coincidir con las labels del Deployment
+  ports:
+    - protocol: TCP
+      port: 4000        # Puerto del Service
+      targetPort: 3000  # Puerto del contenedor
+  type: ClusterIP     # Cambia a NodePort o LoadBalancer si quieres acceso externo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mi-configmap
+  namespace: sofia-mosquera-dev
+data:
+  DATABASE: "192.168.1.1"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mi-secret
+  namespace: sofia-mosquera-dev
+type: Opaque
+data:
+  PASSWORD: aG9sYQ==
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mi-hpa
+  namespace: sofia-mosquera-dev
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: deployment
+    name: mi-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 100
