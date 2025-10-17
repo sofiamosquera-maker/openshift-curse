@@ -28,6 +28,13 @@ spec:
           image: sofiamosquera/smcursoopenshift:2  # <-- Reemplaza con la imagen que quieras usar
           ports:
             - containerPort: 3000
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "800Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1500Mi"
           envFrom:
             - configMapRef:
                 name: mi-configmap
@@ -66,3 +73,22 @@ data:
   PASSWORD: aG9sYQ==
 
 ---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mi-hpa
+  namespace: sofiamnm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: deployment
+    name: mi-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 100
