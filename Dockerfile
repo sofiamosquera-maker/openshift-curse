@@ -3,13 +3,13 @@ FROM openjdk:17-jdk-slim AS build
 
 WORKDIR /app
 
-# Copia el código fuente
+# Copia el cÃ³digo fuente
 COPY Main.java .
 
-# Compila el código
+# Compila el cÃ³digo
 RUN javac Main.java
 
-# Imagen final para ejecución
+# Imagen final para ejecuciÃ³n
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
