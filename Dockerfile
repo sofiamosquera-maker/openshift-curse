@@ -17,6 +17,8 @@ WORKDIR /app
 # Copia el archivo compilado desde la fase de build
 COPY --from=build /app/Main.class .
 
+RUN addgroup --system appgroup && adduser --system --group appuser
+
 RUN chown -R appuser:appgroup /app
 
 USER appuser
