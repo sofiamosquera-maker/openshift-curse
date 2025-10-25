@@ -15,17 +15,7 @@ spec:
     metadata:
       labels:
         app: mi-app
-      annotations:
-        image.openshift.io/triggers:  |
-          [
-            {
-              "from": {
-                "kind": "ImageStreamTag",
-                "name": "ejercicio-codigo-s2i:latest"
-              },
-              "fieldPath": "spec.template.spec.containers[?(@.name==\"contenedor-principal\")].image"
-            }
-          ]    spec:
+    spec:
       containers:
         - name: contenedor-principal
           image: image-registry.openshift-image-registry.svc:5000/sofia-mosquera-dev/ejercicio-codigo-s2i:latest  # <-- Reemplaza con la imagen que quieras usar
@@ -43,6 +33,14 @@ spec:
                 name: mi-configmap
             - secretRef:
                 name: mi-secret
+          volumeMounts:
+            - name: datos
+              mount: /app/data
+              mountPath: "/app/data"
+      volumes:
+        - name: datos
+          persistentVolumeClaim:
+            claimName: mi-pvc
 ---
 apiVersion: v1
 kind: Service
