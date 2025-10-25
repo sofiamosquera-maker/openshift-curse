@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: contenedor-principal
-          image: image-registry.openshift-image-registry.svc:5000/sofia-mosquera-dev/ejercicio-codigo-s2i:latest  # <-- Reemplaza con la imagen que quieras usar
+          image: sofia-mosquera-dev/smcursoopenshift:build-{{ tag }}  # <-- Reemplaza con la imagen que quieras usar
           ports:
             - containerPort: 3000
           resources:
