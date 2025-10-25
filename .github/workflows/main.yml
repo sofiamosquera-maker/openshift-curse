@@ -25,7 +25,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKER_USERNAME  }}/smcursoopenshift
-
+          tags: |
+            type=raw,value=build-${{ github.run_number }}
 
       - name: Build Docker image
         uses: docker/build-push-action@v5
@@ -35,3 +36,33 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install OC CLI
+        run: |
+          curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar xz
+          sudo mv oc /usr/local/bin/
+          oc version
+      - name: Log in Openshift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: https://api.rm1.0a51.p1.openshiftapps.com:6443
+          openshift_token: ${{ secrets.OC_TOKEN }}
+      - name: Update Deployment tag
+        run: |
+          echo "Reemplazando {{ tag }} con ${{ github.run_number }}"
+          sed -i "s|{{ tag }}|${{ github.run_number }}|g" oc.yaml
+          cat oc.yaml
+
+      - name: Deploy files
+        run: |
+          oc project sofia-mosquera-dev
+          oc apply -f oc.yaml
+          oc rollout status deployment/mi-deployment

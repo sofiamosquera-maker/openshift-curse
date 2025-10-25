@@ -19,3 +19,17 @@ roleRef:
   kind: ClusterRole
   name: edit # El rol que creamos
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cicd-binding
+  namespace: sofia-mosquera-dev
+subjects:
+- kind: ServiceAccount
+  name: cicd-serviceaccount # La cuenta de servicio que creamos
+  namespace: sofia-mosquera-dev
+roleRef:
+  kind: Role
+  name: rbac-edit # El rol que creamos
+  apiGroup: rbac.authorization.k8s.io
