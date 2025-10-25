@@ -58,19 +58,6 @@ jobs:
       
       - name: Set project
         run: oc project sofia-mosquera-dev
-      
-      - name: Create DockerHub pull secret
-        run: |
-          echo "Creando/actualizando secret dockerhub-secret..."
-          oc create secret docker-registry dockerhub-secret \
-            --docker-server=docker.io \
-            --docker-username=${{ secrets.DOCKER_USERNAME }} \
-            --docker-password=${{ secrets.DOCKER_TOKEN }} \
-            --docker-email=dummy@example.com \
-            --dry-run=client -o yaml | oc apply -f -
-          
-          # Vincula el secret al ServiceAccount "default"
-          oc secrets link default dockerhub-secret --for=pull -n sofia-mosquera-dev || true
 
       - name: Update Deployment tag
         run: |
