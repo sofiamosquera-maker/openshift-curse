@@ -23,7 +23,7 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: cicd-binding
+  name: cicd-binding-rbac
   namespace: sofia-mosquera-dev
 subjects:
 - kind: ServiceAccount
