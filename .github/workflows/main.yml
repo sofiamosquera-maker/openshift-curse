@@ -55,6 +55,23 @@ jobs:
         with:
           openshift_server_url: https://api.rm1.0a51.p1.openshiftapps.com:6443
           openshift_token: ${{ secrets.OC_TOKEN }}
+      
+      - name: Set project
+        run: oc project sofia-mosquera-dev
+      
+      - name: Create DockerHub pull secret
+        run: |
+          echo "Creando/actualizando secret dockerhub-secret..."
+          oc create secret docker-registry dockerhub-secret \
+            --docker-server=docker.io \
+            --docker-username=${{ secrets.DOCKER_USERNAME }} \
+            --docker-password=${{ secrets.DOCKER_TOKEN }} \
+            --docker-email=dummy@example.com \
+            --dry-run=client -o yaml | oc apply -f -
+          
+          # Vincula el secret al ServiceAccount "default"
+          oc secrets link default dockerhub-secret --for=pull -n sofia-mosquera-dev || true
+
       - name: Update Deployment tag
         run: |
           echo "Reemplazando {{ tag }} con ${{ github.run_number }}"
