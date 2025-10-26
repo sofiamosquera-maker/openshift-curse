@@ -5,13 +5,13 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.*;
 import java.net.*;
 
-public class ClienteProxy {
+public class Main {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(3000), 0);
         server.createContext("/", new ProxyHandler());
         server.setExecutor(null);
         server.start();
-        System.out.println("Cliente iniciado en el puerto 4000");
+        System.out.println("Cliente iniciado en el puerto 3000");
     }
 
     static class ProxyHandler implements HttpHandler {
