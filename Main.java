@@ -1,31 +1,42 @@
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
 
-public class Main {
+import java.io.*;
+import java.net.*;
+
+public class ClienteProxy {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(3000), 0);
-        server.createContext("/", new HelloHandler());
-        server.setExecutor(null); // Usa el ejecutor por defecto
+        server.createContext("/", new ProxyHandler());
+        server.setExecutor(null);
         server.start();
-        System.out.println("Servidor iniciado en el puerto 3000");
+        System.out.println("Cliente iniciado en el puerto 4000");
     }
 
-    static class HelloHandler implements HttpHandler {
+    static class ProxyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            if ("GET".equals(exchange.getRequestMethod())) {
-                String response = "Hola mundo";
-                exchange.sendResponseHeaders(200, response.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
-            } else {
-                exchange.sendResponseHeaders(405, -1); // Método no permitido
+            String targetUrl = "http://mi-servicio-second.sofia-mosquera-dev.svc.cluster.local:4000/";
+            URL url = new URL(targetUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            int status = conn.getResponseCode();
+            StringBuilder response = new StringBuilder();
+
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                String line;
+                while ((line = in.readLine()) != null) {
+                    response.append(line);
+                }
             }
+
+            String result = "Respuesta del servicio A: " + response;
+            exchange.sendResponseHeaders(status, result.getBytes().length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(result.getBytes());
+            os.close();
         }
     }
 }
