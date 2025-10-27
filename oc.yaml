@@ -34,14 +34,26 @@ spec:
                 name: mi-configmap
             - secretRef:
                 name: mi-secret
-          volumeMounts:
-            - name: datos
-              mount: /app/data
-              mountPath: "/app/data"
-      volumes:
-        - name: datos
-          persistentVolumeClaim:
-            claimName: mi-pvc
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 3000
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 3000
+            failureThreshold: 5
+            initialDelaySeconds: 0
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            failureThreshold: 5
+            initialDelaySeconds: 0
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service

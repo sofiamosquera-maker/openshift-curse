@@ -7,13 +7,24 @@ import java.net.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        // Crear el servidor en el puerto 3000
         HttpServer server = HttpServer.create(new InetSocketAddress(3000), 0);
+
+        // Contexto principal (proxy)
         server.createContext("/", new ProxyHandler());
-        server.setExecutor(null);
+
+        // Endpoints de salud
+        server.createContext("/health", new SimpleResponseHandler("OK"));
+        server.createContext("/startup", new SimpleResponseHandler("OK"));
+        server.createContext("/readiness", new SimpleResponseHandler("OK"));
+
+        server.setExecutor(null); // Usa el executor por defecto
         server.start();
-        System.out.println("Cliente iniciado en el puerto 3000");
+
+        System.out.println("Servidor iniciado en el puerto 3000");
     }
 
+    // Handler para el proxy
     static class ProxyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -34,9 +45,28 @@ public class Main {
 
             String result = "Respuesta del servicio A: " + response;
             exchange.sendResponseHeaders(status, result.getBytes().length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(result.getBytes());
-            os.close();
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(result.getBytes());
+            }
+        }
+    }
+
+    // Handler genérico para responder "OK"
+    static class SimpleResponseHandler implements HttpHandler {
+        private final String message;
+
+        public SimpleResponseHandler(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            byte[] response = message.getBytes();
+            exchange.sendResponseHeaders(200, response.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response);
+            }
         }
     }
 }
+
