@@ -20,20 +20,6 @@ spec:
         - name: contenedor-principal
           image: sofiamosquera/smcursoopenshift:build-{{ tag }}  # <-- Reemplaza con la imagen que quieras usar
           imagePullPolicy: Always
-          ports:
-            - containerPort: 3000
-          resources:
-            requests:
-              cpu: "500m"
-              memory: "800Mi"
-            limits:
-              cpu: "1000m"
-              memory: "1500Mi"
-          envFrom:
-            - configMapRef:
-                name: mi-configmap
-            - secretRef:
-                name: mi-secret
           startupProbe:
             httpGet:
               path: /startup
@@ -54,6 +40,20 @@ spec:
             failureThreshold: 5
             initialDelaySeconds: 0
             periodSeconds: 10
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "800Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1500Mi"
+          envFrom:
+            - configMapRef:
+                name: mi-configmap
+            - secretRef:
+                name: mi-secret
+          ports:
+            - containerPort: 3000
 ---
 apiVersion: v1
 kind: Service
