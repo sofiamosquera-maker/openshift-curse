@@ -28,7 +28,7 @@ public class Main {
     static class ProxyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            String targetUrl = "http://mi-servicio-second.sofia-mosquera-dev.svc.cluster.local:4000/";
+            String targetUrl = "mi-servicio-microservico-2.sofia-mosquera-dev.svc.cluster.local:4000/";
             URL url = new URL(targetUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
