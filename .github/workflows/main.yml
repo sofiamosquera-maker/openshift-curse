@@ -74,4 +74,4 @@ jobs:
       - name: Deploy files
         run: |
           helm show chart oci://registry-1.docker.io/sofiamosquera/mi-chart --version 3
-          helm upgrade --install microservicio-1 oci://registry-1.docker.io/sofiamosquera/mi-chart --version 4 --values values.yaml
+          helm upgrade --install microservicio-1 oci://registry-1.docker.io/sofiamosquera/mi-chart --version 3 --values values.yaml
